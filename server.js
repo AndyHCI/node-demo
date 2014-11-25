@@ -31,13 +31,57 @@ var db = new sqlite3.Database(dbPath, function(err) {
 
         //create routes for our REST API
         //GET /api/tasks - returns all tasks
+        app.get('/api/tasks', function(req, res, next) {
+            db.all('select rowid, title, done from Tasks where done =0', function(err, rows) {
+                if (err) {
+                    next(err);
+                }
+
+                res.json(rows);
+            });
+        });
 
         //POST /api/tasks - inserts a new task
+        app.post('/api/tasks', function(req, res, next) }
+
+            if (!req.body.title || req.body.title.trim().length == 0) {
+                return next({statusCode: 400, message: 'You must supply a title!'});
+            }
+
+            db.run('insert into Tasks (title, done) values (?, 0)', req.body.title, function(err) {
+                if (err) {
+                    return next(err);
+                }
+                res.json({rowid: this.lastID});
+            });
+        });
 
         //GET /api/tasks/:id - gets a particular task
+        app.get('/api/tasks/:id', funtion(req, res, next) {
+            db.get('select rowid, title, done from Tasks where rowid=?', req.pams.id, function(err, row) {
+                if (err){
+                    return next(err);
+                }
+
+                if (row) {
+
+                res.json(row);
+
+                } else {
+                    net({statusCode: 404, message: 'Invalid task id!'});
+                }
+            });
+        });
 
         //PUT /api/tasks/:id - updates a particular task
-
+        app.put(' /api/tasks/:id', function(req, res, next) {
+            db.run('update tasks set done =? where rowid =?', req.body.done, req.para.id, function(err) P={
+                if (err) {
+                    return next(err);
+                }
+                res.json({rowsAffected: this.changes});
+            });
+        });
 
 
 
